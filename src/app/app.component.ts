@@ -43,7 +43,7 @@ var moment = require('moment')
 	`],
 })
 export class AppComponent {
-  title = 'estimation-analyzer';
+  title = 'worklog-analyzer';
   rowData: WorkLog[] = [];
   isViewTypeList:boolean = true;
   errMsg = '';
