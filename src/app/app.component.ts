@@ -44,7 +44,7 @@ var moment = require('moment')
 export class AppComponent {
   title = 'estimation-analyzer';
   rowData: WorkLog[] = [];
-  isViewTypeList:boolean = false;
+  isViewTypeList:boolean = true;
   
   filterParams: IDateFilterParams = {
     comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
