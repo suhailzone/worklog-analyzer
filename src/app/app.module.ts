@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgbPaginationModule, NgbAlertModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule, NgbAlertModule, NgbDatepickerModule, NgbToastModule, NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -9,6 +9,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
 import { EstimateChartComponent } from './estimate-chart/estimate-chart.component';
+import { NgbToastService } from 'ngb-toast';
 
 @NgModule({
   declarations: [
@@ -21,9 +22,10 @@ import { EstimateChartComponent } from './estimate-chart/estimate-chart.componen
     AppRoutingModule,
     BrowserAnimationsModule,
     NgbModule,
+    NgbToastModule,
     NgbDatepickerModule, FormsModule, JsonPipe
   ],
-  providers: [],
+  providers: [NgbToastService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import Chart from 'chart.js/auto';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { WorkLog } from './modules/WorkLog';
+import  {  NgbToast, NgbToastService, NgbToastType }  from  'ngb-toast';
 var moment = require('moment')
 
 @Component({
@@ -45,7 +46,27 @@ export class AppComponent {
   title = 'estimation-analyzer';
   rowData: WorkLog[] = [];
   isViewTypeList:boolean = true;
-  
+  errMsg = '';
+  showToast = false;
+  constructor(private  toastService:  NgbToastService) {}
+  hideToast(){
+    this.showToast = false;
+  }
+  showSuccess(): void {
+		const toast: NgbToast = {
+			toastType:  NgbToastType.Success,
+			text:  "This is an sample success toast with dismissible action",
+			dismissible:  true,
+			onDismiss: () => {
+				console.log("Toast dismissed!!");
+			}
+		}
+		this.toastService.show(toast);
+	}
+	
+	removeToast(toast: NgbToast): void {
+		this.toastService.remove(toast);
+	}
   filterParams: IDateFilterParams = {
     comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
       var dateAsString = cellValue;
@@ -126,8 +147,16 @@ export class AppComponent {
     let f = files?.files.item(0);
     if (f){
       let x = new Blob([f]);
-      let y = await this.convertExcelToJson(x)
-      this.rowData = y;
+      try{
+        let y = await this.convertExcelToJson(x)
+        this.rowData = y;
+      }
+      catch(ex:any){
+        // this.showSuccess()
+        // this.errMsg = ex.toString()
+        // this.showToast = true;
+        alert(ex)
+      }
     }
   }
   readOpts = { // <--- need these settings in readFile options
@@ -144,12 +173,13 @@ export class AppComponent {
     reader.readAsBinaryString(file);
     return new Promise((resolve, reject) => {
       reader.onload = function(){
-        //  alert(reader.result);
-        let data = reader.result;
-         workbookkk=read(data,{type: 'binary'});
-         workbookkk.SheetNames.forEach(function(sheetName) {
+        try {
+          
+          let data = reader.result;
+          workbookkk=read(data,{type: 'binary'});
+          workbookkk.SheetNames.forEach(function(sheetName) {
           // Here is your object
-           XL_row_object = utils.sheet_to_json(workbookkk.Sheets[sheetName], {
+          XL_row_object = utils.sheet_to_json(workbookkk.Sheets[sheetName], {
             header: 1,
             defval: '',
             blankrows: true,
@@ -157,13 +187,19 @@ export class AppComponent {
             dateNF: 'd"/"m"/"yyyy' // <--- need dateNF in sheet_to_json options (note the escape chars)
           });
           let wl: WorkLog[] = [];
+          if(XL_row_object[0] !== 'Author'){
+            reject("Invalid file")
+          }
           XL_row_object?.slice(1).forEach((log:any) => {
             log[0] !== '' && 
             wl.push(
               {author: log[0], logDate: moment().format(log[1], "DD/MM/YYYY" ), workLog: Number.parseInt(log[2])})
-          })
+            })
             resolve(wl);
-        });
+          });
+        } catch (error) {
+          reject(error)
+        }
         };
     });
   }
