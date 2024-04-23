@@ -144,7 +144,12 @@ export class AppComponent {
     menuTabs: ["filterMenuTab"],
   };
   async handleFileInput(files: any | null){
-    let f = files?.files.item(0);
+    let f: File = files?.files.item(0);
+    let fileName = f.name.split('.');
+    if(fileName.length !== 2 || fileName[1] !== 'xlsx'){
+      alert('Invalid file type')
+      return;
+    } 
     if (f){
       let x = new Blob([f]);
       try{
@@ -168,7 +173,7 @@ export class AppComponent {
    {
     let reader = new FileReader();
     let workbookkk: WorkBook;
-    let XL_row_object : unknown[];
+    let XL_row_object : any[];
     let json_object;
     reader.readAsBinaryString(file);
     return new Promise((resolve, reject) => {
@@ -187,8 +192,8 @@ export class AppComponent {
             dateNF: 'd"/"m"/"yyyy' // <--- need dateNF in sheet_to_json options (note the escape chars)
           });
           let wl: WorkLog[] = [];
-          if(XL_row_object[0] !== 'Author'){
-            reject("Invalid file")
+          if(XL_row_object[0][0] !== 'AUTHOR'){
+            reject("Invalid file data")
           }
           XL_row_object?.slice(1).forEach((log:any) => {
             log[0] !== '' && 
