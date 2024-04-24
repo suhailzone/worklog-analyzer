@@ -1,18 +1,24 @@
 <div class="p-4">
     <div class="flx mb-2">
         <h4>Worklog Analyzer</h4>
-        <a class="btn btn-outline-dark bi bi-github" 
-            data-toggle="tooltip" 
-            data-placement="bottom" 
-            title="Github link" 
-            href="https://github.com/suhailzone/worklog-analyzer">
-        </a>
+        <div class="flx">
+            <a class="btn btn-success bi bi-file-earmark-arrow-down dwld-btn"
+                title="Dowload sample file"
+                target="_blank" href="/assets/worklog-template.xlsx">
+            </a>
+            <a class="btn btn-outline-dark bi bi-github" 
+                data-toggle="tooltip" 
+                data-placement="bottom" 
+                title="Github link" 
+                href="https://github.com/suhailzone/worklog-analyzer">
+            </a>
+        </div>
     </div>
     <div class="flx mb-2">
         <div class="btn-group mr-2" role="group" aria-label="Basic example">
-            <button type="button" (click)="changeView('list')" [ngClass]="isViewTypeList ? 'btn btn-primary' : 'btn btn-primary-outline'">List</button>
-            <button type="button" (click)="changeView('graph')" [ngClass]="!isViewTypeList ? 'btn btn-primary' : 'btn btn-primary-outline'">Graph</button>
-          </div>
+            <button type="button" class="bi bi-list-task" (click)="changeView('list')" [ngClass]="isViewTypeList ? 'btn btn-primary' : 'btn btn-primary-outline'"></button>
+            <button type="button" class="bi bi-graph-up" (click)="changeView('graph')" [ngClass]="!isViewTypeList ? 'btn btn-primary' : 'btn btn-primary-outline'"></button>
+        </div>
         <form class="row row-cols-sm-auto" *ngIf="!isViewTypeList">
             <div class="col-12">
                 <div class="dp-hidden position-absolute">
@@ -70,7 +76,10 @@
                 </div>
             </div>
         </form>
-        <input class="btn btn-success" type="file" id="file" (change)="handleFileInput($event.target)" />
+        <div>
+            <input class="form-control" id="formFile" accept=".xlsx" type="file" id="file" 
+            (change)="handleFileInput($event.target)" />    
+        </div>
     </div>
     <!-- <ngb-toast
         [autohide]="true" 
@@ -83,7 +92,7 @@
     <ag-grid-angular
         *ngIf="isViewTypeList"
         class="ag-theme-quartz"
-        style="height: 450px;"
+        style="height: 70vh;"
         [rowData]="rowData"
         [defaultColDef]="defaultColDef"
         [columnDefs]="colDefs">

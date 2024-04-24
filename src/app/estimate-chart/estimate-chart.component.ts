@@ -9,7 +9,7 @@ import { WorkLog } from '../modules/WorkLog';
   styleUrls: ['./estimate-chart.component.scss']
 })
 export class EstimateChartComponent implements OnInit, OnChanges {
-  chart: any = []
+  chart: Chart | null = null
   constructor() {}
   ngOnInit(): void {
     
@@ -54,6 +54,7 @@ export class EstimateChartComponent implements OnInit, OnChanges {
         datasets.push(dsData)
       })
       console.log(datasets)
+      this.chart?.destroy()
       this.chart = new Chart('canvas', {
         type: 'line',
         data: {

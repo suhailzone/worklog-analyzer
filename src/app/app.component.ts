@@ -49,6 +49,9 @@ export class AppComponent {
   errMsg = '';
   showToast = false;
   constructor(private  toastService:  NgbToastService) {}
+  download(){
+    window.open('/assets/worklog-template.xlsx', '_blank');
+  }
   hideToast(){
     this.showToast = false;
   }
