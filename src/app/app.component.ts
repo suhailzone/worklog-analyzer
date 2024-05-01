@@ -45,7 +45,7 @@ var moment = require('moment')
 export class AppComponent {
   title = 'worklog-analyzer';
   rowData: WorkLog[] = [];
-  isViewTypeList:boolean = true;
+  isViewTypeList:string = 'list';
   errMsg = '';
   showToast = false;
   constructor(private  toastService:  NgbToastService) {}
@@ -97,9 +97,9 @@ export class AppComponent {
 	hoveredDate: NgbDate | null = null;
 	fromDate: NgbDate | null = this.calendar.getToday();
 	toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
-  changeView(type:string){
-    this.isViewTypeList = (type === 'list') ? true : false
-  }
+  
+  changeView = (type:string) => this.isViewTypeList = type
+  
 	onDateSelection(date: NgbDate) {
 		if (!this.fromDate && !this.toDate) {
 			this.fromDate = date;
@@ -201,7 +201,12 @@ export class AppComponent {
           XL_row_object?.slice(1).forEach((log:any) => {
             log[0] !== '' && 
             wl.push(
-              {author: log[0], logDate: moment().format(log[1], "DD/MM/YYYY" ), workLog: Number.parseInt(log[2])})
+              {
+                author: log[0].includes('@') ? log[0].split('@')[0] : log[0],
+                logDate: moment().format(log[1], "DD/MM/YYYY" ), 
+                workLog: Number.parseInt(log[2])
+              }
+              )
             })
             resolve(wl);
           });

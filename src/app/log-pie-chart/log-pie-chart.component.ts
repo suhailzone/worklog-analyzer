@@ -1,18 +1,18 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
-import { Chart } from 'chart.js/auto';
 import { WorkLog } from '../modules/WorkLog';
+import Chart, { ChartConfiguration, ChartData, ChartDataset } from 'chart.js/auto';
 
 @Component({
-  selector: 'app-estimate-chart',
-  templateUrl: './estimate-chart.component.html',
-  styleUrls: ['./estimate-chart.component.scss']
+  selector: 'app-log-pie-chart',
+  templateUrl: './log-pie-chart.component.html',
+  styleUrls: ['./log-pie-chart.component.scss']
 })
-export class EstimateChartComponent implements OnInit, OnChanges {
+export class LogPieChartComponent implements OnInit {
   chart: Chart | null = null
-  constructor() {}
+  constructor() { }
+
   ngOnInit(): void {
-    
   }
   @Input() fromDate: NgbDate | null = null;
   @Input() toDate: NgbDate | null = null;
@@ -33,35 +33,46 @@ export class EstimateChartComponent implements OnInit, OnChanges {
         dates = [...dates, `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`]
         from.setDate(from.getDate() + 1);
       }
-      let datasets: any[] = []
+      let datasets: ChartDataset[] = []
+      let dsData: ChartDataset = {
+        label: 'Logged hours',
+        data: [],
+        backgroundColor:[], 
+        // ,
+        hoverOffset: 4
+      }
+      // console.log(this.rowData)
       authors.forEach(a => {
-        let dsData: any = {
-          label: a,
-          borderWidth: 2,
-          data: [],
-          borderColor: this.random_rgba(),
-          tension: 0.3
-        }
+        let authorTotalWorklog = 0
         let authorData = this.rowData?.filter(rd => rd.author === a);
         dates.forEach(d => {
           let authorDate = authorData?.find(ad => this.getDate(ad.logDate, d))
           if (authorDate){
-            dsData.data.push(authorDate.workLog)
-          }else{
-            dsData.data.push(0)
+            authorTotalWorklog += authorDate.workLog
           }
         })
-        datasets.push(dsData)
+        let newColor = this.random_rgba();
+        while((dsData.backgroundColor as string[]).includes(newColor)){
+          newColor = this.random_rgba()
+        }
+        dsData.backgroundColor && (dsData.backgroundColor as string[])?.push(newColor)
+        dsData.data.push(authorTotalWorklog)
       })
+      datasets.push(dsData);
       console.log(datasets)
       this.chart?.destroy()
-      this.chart = new Chart('canvas', {
-        type: 'line',
-        data: {
-          labels: dates,
-          datasets: datasets,
-        },
-      });
+      let chartData: ChartData = {
+        labels: authors,
+        datasets: datasets,
+      }
+      let chartConfig: ChartConfiguration = {
+        type: 'pie',
+        data: chartData,
+        options: {
+          maintainAspectRatio: false,
+      }
+      }
+      this.chart = new Chart('pie-chart', chartConfig);
     }
   }  
   getDate(logDate: Date, dateToMatch:string): boolean{

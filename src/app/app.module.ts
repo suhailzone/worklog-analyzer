@@ -10,11 +10,13 @@ import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
 import { EstimateChartComponent } from './estimate-chart/estimate-chart.component';
 import { NgbToastService } from 'ngb-toast';
+import { LogPieChartComponent } from './log-pie-chart/log-pie-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EstimateChartComponent
+    EstimateChartComponent,
+    LogPieChartComponent
   ],
   imports: [
     AgGridModule,
