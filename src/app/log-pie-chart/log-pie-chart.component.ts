@@ -25,12 +25,12 @@ export class LogPieChartComponent implements OnInit {
         if(!authors.includes(rd.author))
           authors.push(rd.author)
       });
-      let from = new Date(this.fromDate.year, this.fromDate.month, this.fromDate.day);
-      let to = new Date(this.toDate.year, this.toDate.month, this.toDate.day);
+      let from = new Date(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
+      let to = new Date(this.toDate.year, this.toDate.month - 1, this.toDate.day);
       let dates : string[] = [];
       while (from <= to) {
         let date = new Date(from);
-        dates = [...dates, `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`]
+        dates = [...dates, `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`]
         from.setDate(from.getDate() + 1);
       }
       let datasets: ChartDataset[] = []

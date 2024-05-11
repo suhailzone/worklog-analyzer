@@ -90,7 +90,8 @@ export class AppComponent {
         return 1;
       }
       return 0;
-    },};
+    },
+  };
   calendar = inject(NgbCalendar);
 	formatter = inject(NgbDateParserFormatter);
 
@@ -192,18 +193,19 @@ export class AppComponent {
             defval: '',
             blankrows: true,
             raw: false,
-            dateNF: 'd"/"m"/"yyyy' // <--- need dateNF in sheet_to_json options (note the escape chars)
+            dateNF: 'd"/"mm"/"yyyy' // <--- need dateNF in sheet_to_json options (note the escape chars)
           });
           let wl: WorkLog[] = [];
           if(XL_row_object[0][0] !== 'AUTHOR'){
             reject("Invalid file data")
           }
+          // console.log(XL_row_object)
           XL_row_object?.slice(1).forEach((log:any) => {
             log[0] !== '' && 
             wl.push(
               {
                 author: log[0].includes('@') ? log[0].split('@')[0] : log[0],
-                logDate: moment().format(log[1], "DD/MM/YYYY" ), 
+                logDate: moment().format(log[1], "dd/MM/yyyy" ), 
                 workLog: Number.parseInt(log[2])
               }
               )
