@@ -1,5 +1,7 @@
 # Worklog Analyzer
-[Link]('https://worklog-analyzer.netlify.app')
+
+https://worklog-analyzer.netlify.app
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.0.4.
 
 ## Development server
