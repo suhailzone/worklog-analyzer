@@ -1,5 +1,5 @@
 export interface WorkLog{
     author:string,
-    logDate:Date,
+    logDate?:Date,
     workLog:number
   }

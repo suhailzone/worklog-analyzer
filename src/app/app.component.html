@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="flx mb-2">
-        <div class="btn-group mr-2 cust-border" role="group" aria-label="Basic example">
+        <div class="btn-group mr-2 cust-border" role="group" aria-label="View">
             <button type="button" class="bi bi-list-task" (click)="changeView('list')" [ngClass]="isViewTypeList === 'list' ? 'btn btn-primary' : 'btn btn-primary-outline'"></button>
             <button type="button" class="bi bi-graph-up" (click)="changeView('graph')" [ngClass]="isViewTypeList === 'graph' ? 'btn btn-primary' : 'btn btn-primary-outline'"></button>
             <button type="button" class="btn bi bi-pie-chart" (click)="changeView('chart')" [ngClass]="isViewTypeList === 'chart' ? 'btn btn-primary' : 'btn btn-primary-outline'"></button>
@@ -77,6 +77,10 @@
                 </div>
             </div>
         </form>
+        <div class="btn-group mr-2 cust-border" *ngIf="isViewTypeList === 'list'" role="group" aria-label="ListViewType">
+            <button type="button" class="bi" (click)="changeListView('summary')" [ngClass]="listView === 'summary' ? 'btn btn-primary' : 'btn btn-primary-outline'">Summary</button>
+            <button type="button" class="bi" (click)="changeListView('detail')" [ngClass]="listView === 'detail' ? 'btn btn-primary' : 'btn btn-primary-outline'">Detail</button>
+        </div>
         <div>
             <input class="form-control" id="formFile" accept=".xlsx" type="file" id="file" 
             (change)="handleFileInput($event.target)" />    
@@ -93,20 +97,20 @@
     <ag-grid-angular
         *ngIf="isViewTypeList === 'list'"
         class="ag-theme-quartz"
-        style="height: 70vh;"
+        style="height: 77vh;"
         [rowData]="rowData"
         [defaultColDef]="defaultColDef"
         [columnDefs]="colDefs">
     </ag-grid-angular>    
     <app-estimate-chart 
         *ngIf="isViewTypeList === 'graph'" 
-        [rowData]="rowData"
+        [rowData]="detailList"
         [fromDate]="fromDate" 
         [toDate]="toDate">
     </app-estimate-chart>
     <app-log-pie-chart
         *ngIf="isViewTypeList === 'chart'" 
-        [rowData]="rowData"
+        [rowData]="detailList"
         [fromDate]="fromDate" 
         [toDate]="toDate">
     </app-log-pie-chart>

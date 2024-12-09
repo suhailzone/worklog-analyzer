@@ -47,7 +47,11 @@ export class AppComponent {
   rowData: WorkLog[] = [];
   isViewTypeList:string = 'list';
   errMsg = '';
+  listView = 'summary'
   showToast = false;
+  summaryList: WorkLog[] = [];
+  detailList: WorkLog[] = [];
+  colDefs: ColDef[] = []
   constructor(private  toastService:  NgbToastService) {}
   download(){
     window.open('/assets/worklog-template.xlsx', '_blank');
@@ -99,7 +103,7 @@ export class AppComponent {
 	fromDate: NgbDate | null = this.calendar.getToday();
 	toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
   
-  changeView = (type:string) => this.isViewTypeList = type
+  changeView = (type: string) => this.isViewTypeList = type
   
 	onDateSelection(date: NgbDate) {
 		if (!this.fromDate && !this.toDate) {
@@ -135,18 +139,56 @@ export class AppComponent {
 		return parsed && this.calendar.isValid(NgbDate.from(parsed)) ? NgbDate.from(parsed) : currentValue;
 	}
   // Column Definitions: Defines the columns to be displayed.
-  colDefs: ColDef[] = [
-    { field: "author" },
-    { field: "logDate", filter: "agDateColumnFilter",
-    filterParams: this.filterParams, },
-    { field: "workLog" },
+  detailColDefs: ColDef[] = [
+    { 
+      field: "author" 
+    },
+    { 
+      field: "logDate", 
+      filter: "agDateColumnFilter", 
+      filterParams: this.filterParams,
+      cellRenderer: (data:any) => {
+        return moment(data.value).format('DD/MMM/YYYY')
+      }
+    },
+    { 
+      field: "workLog" 
+    },
   ];
+  summaryColDefs: ColDef[] = [
+    { 
+      field: "author" 
+    },
+    { 
+      field: "workLog", 
+      headerName: "Total worklog"
+    },
+  ];
+  
   public defaultColDef: ColDef = {
     flex: 1,
     minWidth: 150,
     filter: "agTextColumnFilter",
     menuTabs: ["filterMenuTab"],
   };
+
+  changeListView = (view:string) => {
+    this.listView  = view;
+    switch(view){
+      case "summary":
+        this.rowData = this.summaryList;
+        this.colDefs = this.summaryColDefs;
+        break;
+
+      case "detail":
+        this.rowData = this.detailList;
+        this.colDefs = this.detailColDefs
+        break;
+
+      default:
+        break;
+    }
+  }
   async handleFileInput(files: any | null){
     let f: File = files?.files.item(0);
     let fileName = f.name.split('.');
@@ -157,8 +199,29 @@ export class AppComponent {
     if (f){
       let x = new Blob([f]);
       try{
-        let y = await this.convertExcelToJson(x)
-        this.rowData = y;
+        let y = await this.convertExcelToJson(x);
+        let dates:any[] = y.map(wl => wl.logDate);
+        var min = new Date(dates.reduce(function (a, b) { return a < b ? a : b; }));
+        this.fromDate = new NgbDate(min.getFullYear(), min.getMonth() + 1, min.getDate())
+        this.toDate = this.calendar.getNext(this.fromDate, 'd', 10);
+        this.detailList = y;
+        let authors: string[] = []
+        this.detailList.forEach(rd => {
+          if(!authors.includes(rd.author))
+            authors.push(rd.author)
+        });
+        let summary : WorkLog[] = []
+        authors.forEach(a => {
+          let sum = this.detailList.filter(rd => rd.author === a)
+            .map(rd => rd.workLog)
+            .reduce((a, b) => a + b, 0)
+          summary.push({
+            author: a,
+            workLog: sum
+          });          
+        });
+        this.summaryList = summary;
+        this.changeListView(this.listView);
       }
       catch(ex:any){
         // this.showSuccess()
@@ -173,8 +236,7 @@ export class AppComponent {
     cellDates:true
   };
   
-  convertExcelToJson(file: Blob): Promise<WorkLog[]>
-   {
+  convertExcelToJson(file: Blob): Promise<WorkLog[]>{
     let reader = new FileReader();
     let workbookkk: WorkBook;
     let XL_row_object : any[];

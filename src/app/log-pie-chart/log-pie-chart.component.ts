@@ -46,7 +46,7 @@ export class LogPieChartComponent implements OnInit {
         let authorTotalWorklog = 0
         let authorData = this.rowData?.filter(rd => rd.author === a);
         dates.forEach(d => {
-          let authorDate = authorData?.find(ad => this.getDate(ad.logDate, d))
+          let authorDate = authorData?.find(ad => ad.logDate && this.getDate(ad.logDate, d))
           if (authorDate){
             authorTotalWorklog += authorDate.workLog
           }
@@ -78,7 +78,9 @@ export class LogPieChartComponent implements OnInit {
   getDate(logDate: Date, dateToMatch:string): boolean{
     let splittedDate = logDate.toString().split('/');
     let dtm = dateToMatch.split('/')
-    return splittedDate[0].replace(/^0+/, '') === dtm[0] && splittedDate[1].replace(/^0+/, '') == dtm[1] && splittedDate[2] == dtm[2]
+    return splittedDate[0].replace(/^0+/, '') === dtm[1] 
+      && splittedDate[1].replace(/^0+/, '') == dtm[0] 
+      && splittedDate[2] == (dtm[2].length > 2 ? dtm[2].slice(2,4) : dtm[2])
   }
   random_rgba() {
     var o = Math.round, r = Math.random, s = 255;
